@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三文字みくじ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #f3ecdd;
+    --paper-dark: #e8dec8;
+    --ink: #2b2723;
+    --ink-soft: #5a5248;
+    --hanko: #b8332a;
+    --gold: #b6912f;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0;
+    height:100%;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(0,0,0,0.03), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(0,0,0,0.03), transparent 40%),
+      var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(0,0,0,0.03), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(0,0,0,0.03), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 3px),
+      var(--paper);
+    color: var(--ink);
+    font-family: 'Shippori Mincho', serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .frame{
+    width:min(90vw, 420px);
+    padding: 36px 28px 30px;
+    border: 1px solid rgba(43,39,35,0.35);
+    position:relative;
+  }
+  .frame::before, .frame::after{
+    content:"";
+    position:absolute;
+    width:14px; height:14px;
+    border: 1px solid rgba(43,39,35,0.35);
+  }
+  .frame::before{ top:-7px; left:-7px; border-right:none; border-bottom:none; }
+  .frame::after{ bottom:-7px; right:-7px; border-left:none; border-top:none; }
+
+  .eyebrow{
+    text-align:center;
+    font-size: 12px;
+    letter-spacing: 0.4em;
+    color: var(--ink-soft);
+    margin: 0 0 6px;
+  }
+  h1{
+    text-align:center;
+    font-size: 22px;
+    font-weight:600;
+    letter-spacing: 0.18em;
+    margin: 0 0 28px;
+  }
+
+  .stage{
+    display:flex;
+    justify-content:center;
+    gap: 18px;
+    min-height: 160px;
+    align-items:center;
+    margin-bottom: 30px;
+  }
+  .tile{
+    width: 84px;
+    height: 110px;
+    border: 1px solid rgba(43,39,35,0.5);
+    background: linear-gradient(180deg, #fbf8f0, var(--paper-dark));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    box-shadow: 2px 3px 0 rgba(43,39,35,0.08);
+  }
+  .tile span{
+    font-family: 'Yuji Syuku', serif;
+    font-size: 56px;
+    line-height:1;
+    color: var(--ink);
+    opacity:0;
+    transform: scale(1.5);
+    filter: blur(2px);
+  }
+  .tile.placeholder span{
+    opacity: 0.18;
+    transform: none;
+    filter:none;
+    font-size: 30px;
+    content: "・";
+  }
+  .tile.reveal span{
+    animation: stamp 0.5s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+  @keyframes stamp{
+    0%{ opacity:0; transform: scale(1.6); filter: blur(3px); }
+    60%{ opacity:1; transform: scale(0.92); filter: blur(0); }
+    100%{ opacity:1; transform: scale(1); filter: blur(0); }
+  }
+
+  .controls{ display:flex; justify-content:center; }
+  button{
+    font-family: 'Shippori Mincho', serif;
+    font-size: 15px;
+    letter-spacing: 0.3em;
+    padding: 14px 36px;
+    background: var(--hanko);
+    color: #f3ecdd;
+    border: none;
+    cursor:pointer;
+    position:relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 3px 0 #7d2019;
+  }
+  button:hover{ filter:brightness(1.05); }
+  button:active{
+    transform: translateY(3px);
+    box-shadow: 0 0 0 #7d2019;
+  }
+  button:focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .footnote{
+    text-align:center;
+    margin-top: 20px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.15em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .tile.reveal span{ animation:none; opacity:1; transform:none; filter:none; }
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">RANDOM HIRAGANA</p>
+    <h1>三 文 字 み く じ</h1>
+
+    <div class="stage" id="stage">
+      <div class="tile placeholder"><span>・</span></div>
+      <div class="tile placeholder"><span>・</span></div>
+      <div class="tile placeholder"><span>・</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="drawBtn">引 く</button>
+    </div>
+
+    <p class="footnote" id="footnote">タップして三文字を引いてください</p>
+  </div>
+
+<script>
+  const HIRAGANA = [
+    "あ","い","う","え","お",
+    "か","き","く","け","こ",
+    "さ","し","す","せ","そ",
+    "た","ち","つ","て","と",
+    "な","に","ぬ","ね","の",
+    "は","ひ","ふ","へ","ほ",
+    "ま","み","む","め","も",
+    "や","ゆ","よ",
+    "ら","り","る","れ","ろ",
+    "わ","を","ん",
+    "が","ぎ","ぐ","げ","ご",
+    "ざ","じ","ず","ぜ","ぞ",
+    "だ","ぢ","づ","で","ど",
+    "ば","び","ぶ","べ","ぼ",
+    "ぱ","ぴ","ぷ","ぺ","ぽ"
+  ];
+
+  const stage = document.getElementById('stage');
+  const btn = document.getElementById('drawBtn');
+  const footnote = document.getElementById('footnote');
+  const tiles = [...stage.querySelectorAll('.tile')];
+
+  function pickThree(){
+    const result = [];
+    while(result.length < 3){
+      const c = HIRAGANA[Math.floor(Math.random() * HIRAGANA.length)];
+      result.push(c);
+    }
+    return result;
+  }
+
+  btn.addEventListener('click', () => {
+    const chars = pickThree();
+    tiles.forEach((tile, i) => {
+      tile.classList.remove('placeholder', 'reveal');
+      const span = tile.querySelector('span');
+      // restart animation
+      void tile.offsetWidth;
+      span.textContent = chars[i];
+      tile.classList.add('reveal');
+    });
+    footnote.textContent = chars.join('・');
+  });
+</script>
+</body>
+</html>
