@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>三文字みくじ</title>
+<title>惨文字</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -13,33 +13,63 @@
     --ink: #2b2723;
     --ink-soft: #5a5248;
     --hanko: #b8332a;
+    --hanko-deep: #7d2019;
     --gold: #b6912f;
   }
   *{ box-sizing:border-box; }
   html,body{
     margin:0;
-    height:100%;
-    background:
-      radial-gradient(circle at 20% 15%, rgba(0,0,0,0.03), transparent 40%),
-      radial-gradient(circle at 80% 85%, rgba(0,0,0,0.03), transparent 40%),
-      var(--paper);
-    background-image:
-      radial-gradient(circle at 20% 15%, rgba(0,0,0,0.03), transparent 40%),
-      radial-gradient(circle at 80% 85%, rgba(0,0,0,0.03), transparent 40%),
-      repeating-linear-gradient(0deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 3px),
-      var(--paper);
+    min-height:100%;
+    background: var(--paper);
     color: var(--ink);
     font-family: 'Shippori Mincho', serif;
     display:flex;
     align-items:center;
     justify-content:center;
-    overflow:hidden;
+    padding: 30px 12px;
+    overflow-x:hidden;
   }
+
+  .bg-fx{
+    position:fixed;
+    inset: -10%;
+    z-index:0;
+    pointer-events:none;
+    opacity:0;
+    transition: opacity 0.25s ease;
+    background:
+      conic-gradient(from 0deg, rgba(184,51,42,0.4), rgba(182,145,47,0.3), rgba(184,51,42,0.0), rgba(182,145,47,0.3), rgba(184,51,42,0.4));
+    filter: blur(50px);
+  }
+  .bg-fx.active{
+    opacity:1;
+    animation: bgSpin 1.1s linear infinite, bgPulse 0.35s ease-in-out infinite alternate;
+  }
+  @keyframes bgSpin{
+    from{ transform: rotate(0deg) scale(1.5); }
+    to{ transform: rotate(360deg) scale(1.5); }
+  }
+  @keyframes bgPulse{
+    from{ filter: blur(50px) brightness(1); }
+    to{ filter: blur(70px) brightness(1.3); }
+  }
+
+  .white-out{
+    position:fixed;
+    inset:0;
+    background:#ffffff;
+    opacity:0;
+    pointer-events:none;
+    z-index:50;
+  }
+
   .frame{
-    width:min(90vw, 420px);
+    width:min(92vw, 440px);
     padding: 36px 28px 30px;
     border: 1px solid rgba(43,39,35,0.35);
     position:relative;
+    background: rgba(243,236,221,0.92);
+    z-index:1;
   }
   .frame::before, .frame::after{
     content:"";
@@ -53,26 +83,75 @@
   .eyebrow{
     text-align:center;
     font-size: 12px;
-    letter-spacing: 0.4em;
+    letter-spacing: 0.35em;
     color: var(--ink-soft);
     margin: 0 0 6px;
   }
   h1{
     text-align:center;
-    font-size: 22px;
+    font-size: 24px;
     font-weight:600;
     letter-spacing: 0.18em;
     margin: 0 0 28px;
+    color: var(--ink);
+    text-shadow: 1.5px 1.5px 0 rgba(184,51,42,0.35);
+  }
+
+  .stage-wrap{
+    position:relative;
+    margin-bottom: 26px;
+  }
+  .reach-banner{
+    position:absolute;
+    left:50%;
+    top:-34px;
+    transform: translateX(-50%) scale(0.8);
+    font-family:'Yuji Syuku', serif;
+    font-size: 22px;
+    letter-spacing: 0.3em;
+    color: var(--hanko);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    text-shadow: 0 0 6px rgba(184,51,42,0.25);
+  }
+  .reach-banner.show{
+    opacity:1;
+    transform: translateX(-50%) scale(1);
+    animation: reachPulse 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes reachPulse{
+    from{ text-shadow: 0 0 4px rgba(184,51,42,0.2); }
+    to{ text-shadow: 0 0 16px rgba(184,51,42,0.7); }
   }
 
   .stage{
+    position:relative;
     display:flex;
     justify-content:center;
-    gap: 18px;
+    gap: 16px;
     min-height: 160px;
     align-items:center;
-    margin-bottom: 30px;
   }
+  .stage.drumroll{
+    animation: stageShake 0.12s linear infinite;
+  }
+  @keyframes stageShake{
+    0%{ transform: translate(0,0); }
+    25%{ transform: translate(1px,-1px); }
+    50%{ transform: translate(-1px,1px); }
+    75%{ transform: translate(1px,1px); }
+    100%{ transform: translate(-1px,-1px); }
+  }
+  .stage.light-effect .tile span{
+    animation: charFadeGlow 5s ease forwards;
+  }
+  @keyframes charFadeGlow{
+    0%{ opacity:1; text-shadow: 0 0 0 rgba(255,255,255,0); }
+    25%{ text-shadow: 0 0 18px rgba(255,255,255,0.95); }
+    100%{ opacity:0; text-shadow: 0 0 32px rgba(255,255,255,1); }
+  }
+
   .tile{
     width: 84px;
     height: 110px;
@@ -83,34 +162,52 @@
     justify-content:center;
     position:relative;
     box-shadow: 2px 3px 0 rgba(43,39,35,0.08);
+    overflow:hidden;
+  }
+  .tile.locked{
+    border-color: var(--hanko);
+    box-shadow: 2px 3px 0 rgba(184,51,42,0.18);
+  }
+  .tile.locked::after{
+    content:"固";
+    position:absolute;
+    top:3px; left:5px;
+    font-size:10px;
+    color: var(--hanko);
   }
   .tile span{
     font-family: 'Yuji Syuku', serif;
     font-size: 56px;
     line-height:1;
     color: var(--ink);
-    opacity:0;
-    transform: scale(1.5);
-    filter: blur(2px);
   }
   .tile.placeholder span{
     opacity: 0.18;
-    transform: none;
-    filter:none;
     font-size: 30px;
-    content: "・";
   }
-  .tile.reveal span{
-    animation: stamp 0.5s cubic-bezier(.2,.9,.3,1.2) forwards;
+  .tile.spinning span{
+    filter: blur(0.6px);
+    opacity: 0.85;
   }
-  @keyframes stamp{
-    0%{ opacity:0; transform: scale(1.6); filter: blur(3px); }
-    60%{ opacity:1; transform: scale(0.92); filter: blur(0); }
+  .tile.spinning.reach-final span{
+    color: var(--hanko);
+  }
+  .tile.stopped span{
+    animation: reelStop 0.4s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+  @keyframes reelStop{
+    0%{ opacity:0.6; transform: scale(1.25); filter: blur(2px); }
+    60%{ opacity:1; transform: scale(0.93); filter: blur(0); }
     100%{ opacity:1; transform: scale(1); filter: blur(0); }
   }
 
-  .controls{ display:flex; justify-content:center; }
-  button{
+  .controls{
+    display:flex;
+    justify-content:center;
+    position:relative;
+    z-index:60;
+  }
+  button#drawBtn{
     font-family: 'Shippori Mincho', serif;
     font-size: 15px;
     letter-spacing: 0.3em;
@@ -119,49 +216,220 @@
     color: #f3ecdd;
     border: none;
     cursor:pointer;
-    position:relative;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 3px 0 #7d2019;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    box-shadow: 0 3px 0 var(--hanko-deep);
   }
-  button:hover{ filter:brightness(1.05); }
-  button:active{
+  button#drawBtn:hover:not(:disabled){ filter:brightness(1.05); }
+  button#drawBtn:active:not(:disabled){
     transform: translateY(3px);
-    box-shadow: 0 0 0 #7d2019;
+    box-shadow: 0 0 0 var(--hanko-deep);
   }
-  button:focus-visible{
+  button#drawBtn:disabled{
+    filter: grayscale(0.3) brightness(0.95);
+    cursor: default;
+  }
+  button#drawBtn:focus-visible{
     outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
 
   .footnote{
     text-align:center;
-    margin-top: 20px;
-    font-size: 11px;
+    margin-top: 18px;
+    font-size: 12px;
     color: var(--ink-soft);
     letter-spacing: 0.15em;
+    min-height: 16px;
+  }
+
+  .settings-toggle{
+    display:block;
+    margin: 22px auto 0;
+    background:none;
+    border:none;
+    font-family:'Shippori Mincho', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    cursor:pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .settings-toggle:hover{ color: var(--ink); }
+
+  .settings-panel{
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(43,39,35,0.3);
+  }
+  .settings-panel[hidden]{ display:none; }
+
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+  }
+
+  .lock-row{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    font-size: 12px;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .lock-row label.pos-label{
+    width: 64px;
+    flex-shrink:0;
+    color: var(--ink-soft);
+  }
+  select{
+    font-family:'Shippori Mincho', serif;
+    font-size: 13px;
+    padding: 3px 6px;
+    border: 1px solid rgba(43,39,35,0.4);
+    background: #fbf8f0;
+    color: var(--ink);
+  }
+  select:disabled{ opacity:0.4; }
+
+  .section-block{
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(43,39,35,0.3);
+    font-size: 12px;
+  }
+  .section-block .title-line{
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+    display:flex;
+    align-items:flex-start;
+    gap:6px;
+  }
+  .section-block .sub-note{
+    font-size: 11px;
+    color: var(--ink-soft);
+    opacity: 0.85;
+    margin: 4px 0 8px;
+  }
+  .combo-row{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .combo-row .combo-del{
+    background:none;
+    border: 1px solid rgba(184,51,42,0.5);
+    color: var(--hanko);
+    font-size: 11px;
+    line-height:1;
+    padding: 3px 7px;
+    cursor:pointer;
+    font-family:'Shippori Mincho', serif;
+  }
+  .combo-row .combo-del:hover{
+    background: rgba(184,51,42,0.08);
+  }
+  .add-btn{
+    margin-top: 4px;
+    background:none;
+    border: 1px dashed rgba(43,39,35,0.4);
+    color: var(--ink-soft);
+    font-size: 12px;
+    padding: 5px 10px;
+    cursor:pointer;
+    font-family:'Shippori Mincho', serif;
+    letter-spacing: 0.05em;
+  }
+  .add-btn:hover{
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  input[type="checkbox"]{
+    accent-color: var(--hanko);
+    width: 14px; height:14px;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  input[type="file"]{
+    font-size: 11px;
+    max-width: 100%;
   }
 
   @media (prefers-reduced-motion: reduce){
-    .tile.reveal span{ animation:none; opacity:1; transform:none; filter:none; }
+    .tile.stopped span{ animation:none; }
+    .reach-banner.show{ animation:none; }
+    .stage.drumroll{ animation:none; }
+    .bg-fx.active{ animation:none; opacity:0.5; }
+    .stage.light-effect .tile span{ animation:none; opacity:0.3; }
   }
 </style>
 </head>
 <body>
-  <div class="frame">
-    <p class="eyebrow">RANDOM HIRAGANA</p>
-    <h1>三 文 字 み く じ</h1>
+  <div class="bg-fx" id="bgFx"></div>
+  <div class="white-out" id="whiteOut"></div>
 
-    <div class="stage" id="stage">
-      <div class="tile placeholder"><span>・</span></div>
-      <div class="tile placeholder"><span>・</span></div>
-      <div class="tile placeholder"><span>・</span></div>
+  <div class="frame">
+    <p class="eyebrow">RANDOM HIRAGANA SLOT</p>
+    <h1>惨 文 字</h1>
+
+    <div class="stage-wrap">
+      <div class="reach-banner" id="reachBanner">リ ー チ</div>
+      <div class="stage" id="stage">
+        <div class="tile placeholder" data-pos="0"><span>・</span></div>
+        <div class="tile placeholder" data-pos="1"><span>・</span></div>
+        <div class="tile placeholder" data-pos="2"><span>・</span></div>
+      </div>
     </div>
 
     <div class="controls">
-      <button id="drawBtn">引 く</button>
+      <button id="drawBtn">回 す</button>
     </div>
 
-    <p class="footnote" id="footnote">タップして三文字を引いてください</p>
+    <p class="footnote" id="footnote">ボタンを押すと左から順に止まります</p>
+
+    <button class="settings-toggle" id="settingsToggle">詳細設定 ▾</button>
+
+    <div class="settings-panel" id="settingsPanel" hidden>
+
+      <label class="toggle-row"><input type="checkbox" id="muteChk"> 🔇 効果音を消音する</label>
+      <label class="toggle-row"><input type="checkbox" id="maruChk"> 文字に「〇」を加える</label>
+
+      <div class="lock-row">
+        <label class="pos-label"><input type="checkbox" id="lockChk0"> 1文字目固定</label>
+        <select id="lockSel0" disabled></select>
+      </div>
+      <div class="lock-row">
+        <label class="pos-label"><input type="checkbox" id="lockChk1"> 2文字目固定</label>
+        <select id="lockSel1" disabled></select>
+      </div>
+      <div class="lock-row">
+        <label class="pos-label"><input type="checkbox" id="lockChk2"> 3文字目固定</label>
+        <select id="lockSel2" disabled></select>
+      </div>
+
+      <div class="section-block">
+        <label class="title-line"><input type="checkbox" id="cheerFileEnable"> 演出効果音を外部ファイルにする</label>
+        <p class="sub-note">音声ファイル(mp3/wav等)を選ぶと、内蔵の合成音の代わりに再生されます。「うぉっ」連呼の音声などをご用意ください。</p>
+        <input type="file" id="cheerFileInput" accept="audio/*">
+      </div>
+
+      <div class="section-block">
+        <p class="title-line"><input type="checkbox" id="specialChk" checked> この1・2・3文字目が揃ったら光フェードアウト</p>
+        <p class="sub-note">1・2文字目がここに登録した組み合わせと一致した時点で、3文字目が回っている間に演出(掛け声+背景フラッシュ)が入ります。3文字すべて一致すると画面が白く包まれます。</p>
+        <div id="specialList"></div>
+        <button type="button" id="specialAddBtn" class="add-btn">＋ 組み合わせを追加</button>
+      </div>
+
+    </div>
   </div>
 
 <script>
@@ -182,32 +450,293 @@
     "ば","び","ぶ","べ","ぼ",
     "ぱ","ぴ","ぷ","ぺ","ぽ"
   ];
+  const MARU = "〇";
+  const HIRAGANA_WITH_MARU = HIRAGANA.concat([MARU]);
 
   const stage = document.getElementById('stage');
-  const btn = document.getElementById('drawBtn');
+  const drawBtn = document.getElementById('drawBtn');
   const footnote = document.getElementById('footnote');
+  const reachBanner = document.getElementById('reachBanner');
+  const bgFx = document.getElementById('bgFx');
+  const whiteOut = document.getElementById('whiteOut');
   const tiles = [...stage.querySelectorAll('.tile')];
+  const settingsToggle = document.getElementById('settingsToggle');
+  const settingsPanel = document.getElementById('settingsPanel');
 
-  function pickThree(){
-    const result = [];
-    while(result.length < 3){
-      const c = HIRAGANA[Math.floor(Math.random() * HIRAGANA.length)];
-      result.push(c);
+  const muteChk = document.getElementById('muteChk');
+  const maruChk = document.getElementById('maruChk');
+
+  const lockChks = [0,1,2].map(i => document.getElementById('lockChk' + i));
+  const lockSels = [0,1,2].map(i => document.getElementById('lockSel' + i));
+
+  const cheerFileEnable = document.getElementById('cheerFileEnable');
+  const cheerFileInput = document.getElementById('cheerFileInput');
+
+  const specialChk = document.getElementById('specialChk');
+  const specialList = document.getElementById('specialList');
+  const specialAddBtn = document.getElementById('specialAddBtn');
+
+  function fillSelect(sel){
+    HIRAGANA_WITH_MARU.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+  lockSels.forEach(fillSelect);
+
+  lockChks.forEach((chk, i) => {
+    chk.addEventListener('change', () => {
+      lockSels[i].disabled = !chk.checked;
+      tiles[i].classList.toggle('locked', chk.checked);
+    });
+  });
+
+  settingsToggle.addEventListener('click', () => {
+    const isHidden = settingsPanel.hasAttribute('hidden');
+    if(isHidden){
+      settingsPanel.removeAttribute('hidden');
+      settingsToggle.textContent = '詳細設定 ▴';
+    } else {
+      settingsPanel.setAttribute('hidden', '');
+      settingsToggle.textContent = '詳細設定 ▾';
     }
-    return result;
+  });
+
+  function addSpecialRow(c1, c2, c3){
+    const row = document.createElement('div');
+    row.className = 'combo-row';
+    const mk = (text) => { const s = document.createElement('span'); s.textContent = text; return s; };
+    const sel1 = document.createElement('select'); fillSelect(sel1); if(c1) sel1.value = c1;
+    const sel2 = document.createElement('select'); fillSelect(sel2); if(c2) sel2.value = c2;
+    const sel3 = document.createElement('select'); fillSelect(sel3); if(c3) sel3.value = c3;
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'combo-del';
+    delBtn.textContent = '削除';
+    delBtn.addEventListener('click', () => row.remove());
+    row.append(mk('1文字目='), sel1, mk('2文字目='), sel2, mk('3文字目='), sel3, delBtn);
+    row._sel1 = sel1; row._sel2 = sel2; row._sel3 = sel3;
+    specialList.appendChild(row);
+  }
+  specialAddBtn.addEventListener('click', () => addSpecialRow());
+  addSpecialRow();
+
+  function randomChar(){
+    const pool = maruChk.checked ? HIRAGANA_WITH_MARU : HIRAGANA;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
-  btn.addEventListener('click', () => {
-    const chars = pickThree();
-    tiles.forEach((tile, i) => {
-      tile.classList.remove('placeholder', 'reveal');
-      const span = tile.querySelector('span');
-      // restart animation
-      void tile.offsetWidth;
-      span.textContent = chars[i];
-      tile.classList.add('reveal');
-    });
-    footnote.textContent = chars.join('・');
+  function startSpinVisual(tile){
+    tile.classList.remove('placeholder', 'stopped');
+    tile.classList.add('spinning');
+    const span = tile.querySelector('span');
+    const intervalId = setInterval(() => {
+      span.textContent = randomChar();
+    }, 45);
+    return intervalId;
+  }
+
+  function stopSpinVisual(tile, intervalId, finalChar){
+    clearInterval(intervalId);
+    const span = tile.querySelector('span');
+    span.textContent = finalChar;
+    tile.classList.remove('spinning', 'reach-final');
+    tile.classList.add('stopped');
+    void tile.offsetWidth;
+    tile.classList.remove('stopped');
+    tile.classList.add('stopped');
+  }
+
+  function showWhiteOut(){
+    whiteOut.style.transition = 'opacity 5s linear';
+    void whiteOut.offsetWidth;
+    whiteOut.style.opacity = '1';
+  }
+  function hideWhiteOut(){
+    whiteOut.style.transition = 'opacity 0.3s ease';
+    whiteOut.style.opacity = '0';
+  }
+
+  /* ---------- audio ---------- */
+  let audioCtx = null;
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+    return audioCtx;
+  }
+
+  function makeNoiseBuffer(ctx, duration){
+    const len = Math.max(1, Math.floor(ctx.sampleRate * duration));
+    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<len;i++){ data[i] = Math.random()*2-1; }
+    return buffer;
+  }
+
+  function playDrumHit(ctx, time, peak){
+    const src = ctx.createBufferSource();
+    src.buffer = makeNoiseBuffer(ctx, 0.06);
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 260;
+    bp.Q.value = 0.9;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(peak, time + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+    src.connect(bp).connect(gain).connect(ctx.destination);
+    src.start(time);
+    src.stop(time + 0.09);
+  }
+
+  function startDrumroll(durationMs){
+    if(muteChk.checked || durationMs <= 0) return;
+    const ctx = ensureAudio();
+    const now = ctx.currentTime;
+    const total = durationMs / 1000;
+    const hitGap = 0.07;
+    const hits = Math.max(1, Math.floor(total / hitGap));
+    for(let i=0;i<hits;i++){
+      const t = now + i*hitGap;
+      const peak = 0.1 + (i/hits)*0.2;
+      playDrumHit(ctx, t, peak);
+    }
+  }
+
+  function playCheerHit(ctx, time, peak){
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(190, time);
+    osc.frequency.exponentialRampToValueAtTime(95, time + 0.13);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(peak, time + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + 0.22);
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = makeNoiseBuffer(ctx, 0.15);
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 700;
+    const ngain = ctx.createGain();
+    ngain.gain.setValueAtTime(0, time);
+    ngain.gain.linearRampToValueAtTime(peak*0.4, time + 0.01);
+    ngain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+    noise.connect(hp).connect(ngain).connect(ctx.destination);
+    noise.start(time);
+    noise.stop(time + 0.16);
+  }
+
+  function playSynthCheer(){
+    const ctx = ensureAudio();
+    const now = ctx.currentTime;
+    const gap = 0.22;
+    for(let i=0;i<4;i++){
+      playCheerHit(ctx, now + i*gap, 0.22 + i*0.045);
+    }
+  }
+
+  let cheerAudioEl = null;
+  let cheerAudioUrl = null;
+  cheerFileInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    if(cheerAudioUrl) URL.revokeObjectURL(cheerAudioUrl);
+    cheerAudioUrl = URL.createObjectURL(file);
+    cheerAudioEl = new Audio(cheerAudioUrl);
+  });
+
+  function playCheer(){
+    if(muteChk.checked) return;
+    if(cheerFileEnable.checked && cheerAudioEl){
+      try{
+        cheerAudioEl.currentTime = 0;
+        cheerAudioEl.play();
+      }catch(e){ /* ignore playback errors */ }
+      return;
+    }
+    playSynthCheer();
+  }
+  /* -------------------------------------------------------------- */
+
+  let isSpinning = false;
+
+  drawBtn.addEventListener('click', () => {
+    if(isSpinning) return;
+    isSpinning = true;
+    drawBtn.disabled = true;
+    footnote.textContent = '';
+    reachBanner.classList.remove('show');
+    stage.classList.remove('drumroll', 'light-effect');
+    bgFx.classList.remove('active');
+    hideWhiteOut();
+
+    const finals = [0,1,2].map(i => lockChks[i].checked ? lockSels[i].value : null);
+    const baseDurations = [650, 1050, 1450];
+    const intervals = [
+      startSpinVisual(tiles[0]),
+      startSpinVisual(tiles[1]),
+      startSpinVisual(tiles[2])
+    ];
+
+    startDrumroll(baseDurations[1]);
+
+    setTimeout(() => {
+      const f0 = finals[0] !== null ? finals[0] : randomChar();
+      finals[0] = f0;
+      stopSpinVisual(tiles[0], intervals[0], f0);
+    }, baseDurations[0]);
+
+    setTimeout(() => {
+      const f1 = finals[1] !== null ? finals[1] : randomChar();
+      finals[1] = f1;
+      stopSpinVisual(tiles[1], intervals[1], f1);
+
+      const willReach = specialChk.checked && [...specialList.children].some(row => {
+        return finals[0] === row._sel1.value && f1 === row._sel2.value;
+      });
+
+      let duration2 = baseDurations[2];
+      if(willReach){
+        duration2 = baseDurations[2] + 450;
+        reachBanner.classList.add('show');
+        stage.classList.add('drumroll');
+        bgFx.classList.add('active');
+        tiles[2].classList.add('reach-final');
+        playCheer();
+      }
+
+      startDrumroll(duration2);
+
+      setTimeout(() => {
+        const f2 = finals[2] !== null ? finals[2] : randomChar();
+        finals[2] = f2;
+        stopSpinVisual(tiles[2], intervals[2], f2);
+        reachBanner.classList.remove('show');
+        stage.classList.remove('drumroll');
+        bgFx.classList.remove('active');
+        footnote.textContent = finals.join('・');
+
+        const matchedSpecial = specialChk.checked && [...specialList.children].some(row => {
+          return finals[0] === row._sel1.value && finals[1] === row._sel2.value && finals[2] === row._sel3.value;
+        });
+        if(matchedSpecial){
+          stage.classList.add('light-effect');
+          showWhiteOut();
+        }
+
+        isSpinning = false;
+        drawBtn.disabled = false;
+      }, duration2 - baseDurations[1]);
+
+    }, baseDurations[1]);
   });
 </script>
 </body>
