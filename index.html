@@ -27,7 +27,7 @@
     align-items:center;
     justify-content:center;
     padding: 30px 12px;
-    overflow-x:hidden;
+    overflow:hidden; /* 幽霊文字がはみ出してもスクロールバーを出さない */
   }
 
   /* ── 演出: 背景グラデ ── */
@@ -48,24 +48,25 @@
     to{filter:blur(70px) brightness(1.3)}
   }
 
-  /* ── 演出: リーチ時の巨大幽霊文字 ── */
+  /* ── 演出: リーチ時の巨大幽霊文字（上下） ── */
   .reach-ghost{
     position:fixed;
     font-family:'Yuji Syuku',serif;
-    font-size: clamp(120px, 38vw, 360px);
+    font-size: 80vw; /* 一部しか見えないくらい大きく */
     line-height:1;
     color: var(--hanko);
     opacity:0;
     pointer-events:none;
     z-index:0;
-    top:50%; transform:translateY(-50%);
+    left:50%;
+    transform:translateX(-50%);
     user-select:none;
     transition: opacity 0.35s ease;
-    text-shadow: 0 0 40px rgba(184,51,42,0.3);
+    text-shadow: 0 0 60px rgba(184,51,42,0.25);
   }
-  #reachGhost1{ left:-10vw; }
-  #reachGhost2{ right:-10vw; }
-  .reach-ghost.show{ opacity:0.09; }
+  #reachGhost1{ top:-15vw; }    /* 上からはみ出す */
+  #reachGhost2{ bottom:-15vw; } /* 下からはみ出す */
+  .reach-ghost.show{ opacity:0.08; }
 
   /* ── 演出: ホワイトアウト ── */
   .white-out{
@@ -165,14 +166,14 @@
     100%{opacity:1;transform:scale(1);filter:blur(0)}
   }
 
-  /* 3文字目スペシャル: 一瞬大きく */
+  /* 3文字目スペシャル: 中央に飛び出して大きく */
   .tile.special-zoom span{
-    animation:specialZoom .55s cubic-bezier(.2,.9,.25,1.4) forwards;
+    animation:specialZoom .75s cubic-bezier(.15,.9,.2,1.3) forwards;
   }
   @keyframes specialZoom{
-    0%{transform:scale(1);color:var(--ink)}
-    35%{transform:scale(2.4);color:var(--hanko);text-shadow:0 0 12px rgba(184,51,42,.5)}
-    100%{transform:scale(1);color:var(--ink);text-shadow:none}
+    0%{transform:translate(0,0) scale(1);color:var(--ink)}
+    40%{transform:translate(var(--zoom-dx,0px),var(--zoom-dy,0px)) scale(9.6);color:var(--hanko);text-shadow:0 0 30px rgba(184,51,42,.7)}
+    100%{transform:translate(0,0) scale(1);color:var(--ink);text-shadow:none}
   }
 
   /* ボタン */
@@ -751,7 +752,12 @@
         );
 
         if(matchedSpecial){
-          // 3文字目を一瞬大きく
+          // 3文字目を画面中央に向かって飛び出させる
+          const rect = tiles[2].getBoundingClientRect();
+          const dx = window.innerWidth/2 - (rect.left + rect.width/2);
+          const dy = window.innerHeight/2 - (rect.top + rect.height/2);
+          tiles[2].style.setProperty('--zoom-dx', dx + 'px');
+          tiles[2].style.setProperty('--zoom-dy', dy + 'px');
           tiles[2].classList.add('special-zoom');
           setTimeout(() => {
             stage.classList.add('light-effect');
