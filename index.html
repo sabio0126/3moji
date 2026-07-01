@@ -418,8 +418,8 @@
 
       <div class="section-block">
         <label class="title-line"><input type="checkbox" id="cheerFileEnable"> 演出効果音を外部ファイルにする</label>
-        <p class="sub-note">音声ファイル(mp3/wav等)を選ぶと、内蔵の合成音の代わりに再生されます。「うぉっ」連呼の音声などをご用意ください。</p>
-        <input type="file" id="cheerFileInput" accept="audio/*">
+        <p class="sub-note">音声ファイル(mp3・wav・m4a・ogg等)を選ぶと、内蔵の合成音の代わりに再生されます。「うぉっ」連呼の音声などをご用意ください。</p>
+        <input type="file" id="cheerFileInput" accept=".mp3,.wav,.m4a,.aac,.ogg,.opus,.mp4,audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/aac">
       </div>
 
       <div class="section-block">
@@ -665,6 +665,67 @@
     playSynthCheer();
   }
   /* -------------------------------------------------------------- */
+
+  /* ---------- 設定の保存・復元 ---------- */
+  const STORAGE_KEY = 'sanmoji_settings_v1';
+
+  function collectSettings(){
+    const specials = [...specialList.children].map(row => ({
+      c1: row._sel1.value, c2: row._sel2.value, c3: row._sel3.value
+    }));
+    return {
+      mute: muteChk.checked,
+      maru: maruChk.checked,
+      cheerFileEnable: cheerFileEnable.checked,
+      specialEnabled: specialChk.checked,
+      locks: [0,1,2].map(i => ({
+        enabled: lockChks[i].checked,
+        value: lockSels[i].value
+      })),
+      specials
+    };
+  }
+
+  function saveSettings(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectSettings()));
+    }catch(e){}
+  }
+
+  function loadSettings(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const s = JSON.parse(raw);
+
+      muteChk.checked = !!s.mute;
+      maruChk.checked = !!s.maru;
+      cheerFileEnable.checked = !!s.cheerFileEnable;
+      specialChk.checked = s.specialEnabled !== false;
+
+      (s.locks || []).forEach((l, i) => {
+        lockChks[i].checked = !!l.enabled;
+        lockSels[i].disabled = !l.enabled;
+        lockSels[i].value = l.value || HIRAGANA[0];
+        tiles[i].classList.toggle('locked', !!l.enabled);
+      });
+
+      // specialList: 既存の1行を消してから復元
+      while(specialList.firstChild) specialList.removeChild(specialList.firstChild);
+      const rows = s.specials && s.specials.length ? s.specials : [{}];
+      rows.forEach(r => addSpecialRow(r.c1, r.c2, r.c3));
+    }catch(e){}
+  }
+
+  // 変更のたびに自動保存
+  document.querySelectorAll('input[type="checkbox"], select').forEach(el => {
+    el.addEventListener('change', saveSettings);
+  });
+  // 組み合わせ行の追加・削除後にも保存(MutationObserver)
+  new MutationObserver(saveSettings).observe(specialList, { childList: true });
+
+  loadSettings();
+  /* -------------------------------------- */
 
   let isSpinning = false;
 
