@@ -30,351 +30,250 @@
     overflow-x:hidden;
   }
 
+  /* ── 演出: 背景グラデ ── */
   .bg-fx{
-    position:fixed;
-    inset: -10%;
-    z-index:0;
-    pointer-events:none;
-    opacity:0;
+    position:fixed; inset:-10%; z-index:0;
+    pointer-events:none; opacity:0;
+    background: conic-gradient(from 0deg,rgba(184,51,42,.4),rgba(182,145,47,.3),rgba(184,51,42,0),rgba(182,145,47,.3),rgba(184,51,42,.4));
+    filter:blur(50px);
     transition: opacity 0.25s ease;
-    background:
-      conic-gradient(from 0deg, rgba(184,51,42,0.4), rgba(182,145,47,0.3), rgba(184,51,42,0.0), rgba(182,145,47,0.3), rgba(184,51,42,0.4));
-    filter: blur(50px);
   }
   .bg-fx.active{
     opacity:1;
     animation: bgSpin 1.1s linear infinite, bgPulse 0.35s ease-in-out infinite alternate;
   }
-  @keyframes bgSpin{
-    from{ transform: rotate(0deg) scale(1.5); }
-    to{ transform: rotate(360deg) scale(1.5); }
-  }
+  @keyframes bgSpin{ from{transform:rotate(0deg) scale(1.5)} to{transform:rotate(360deg) scale(1.5)} }
   @keyframes bgPulse{
-    from{ filter: blur(50px) brightness(1); }
-    to{ filter: blur(70px) brightness(1.3); }
+    from{filter:blur(50px) brightness(1)}
+    to{filter:blur(70px) brightness(1.3)}
   }
 
-  .white-out{
+  /* ── 演出: リーチ時の巨大幽霊文字 ── */
+  .reach-ghost{
     position:fixed;
-    inset:0;
-    background:#ffffff;
+    font-family:'Yuji Syuku',serif;
+    font-size: clamp(120px, 38vw, 360px);
+    line-height:1;
+    color: var(--hanko);
     opacity:0;
     pointer-events:none;
-    z-index:50;
+    z-index:0;
+    top:50%; transform:translateY(-50%);
+    user-select:none;
+    transition: opacity 0.35s ease;
+    text-shadow: 0 0 40px rgba(184,51,42,0.3);
+  }
+  #reachGhost1{ left:-10vw; }
+  #reachGhost2{ right:-10vw; }
+  .reach-ghost.show{ opacity:0.09; }
+
+  /* ── 演出: ホワイトアウト ── */
+  .white-out{
+    position:fixed; inset:0;
+    background:#fff; opacity:0;
+    pointer-events:none; z-index:50;
   }
 
+  /* ── フレーム ── */
   .frame{
-    width:min(92vw, 440px);
-    padding: 36px 28px 30px;
-    border: 1px solid rgba(43,39,35,0.35);
+    width:min(92vw,440px);
+    padding:36px 28px 30px;
+    border:1px solid rgba(43,39,35,.35);
     position:relative;
-    background: rgba(243,236,221,0.92);
+    background:rgba(243,236,221,.92);
     z-index:1;
   }
-  .frame::before, .frame::after{
-    content:"";
-    position:absolute;
+  .frame::before,.frame::after{
+    content:""; position:absolute;
     width:14px; height:14px;
-    border: 1px solid rgba(43,39,35,0.35);
+    border:1px solid rgba(43,39,35,.35);
   }
-  .frame::before{ top:-7px; left:-7px; border-right:none; border-bottom:none; }
-  .frame::after{ bottom:-7px; right:-7px; border-left:none; border-top:none; }
+  .frame::before{top:-7px;left:-7px;border-right:none;border-bottom:none;}
+  .frame::after{bottom:-7px;right:-7px;border-left:none;border-top:none;}
 
   .eyebrow{
-    text-align:center;
-    font-size: 12px;
-    letter-spacing: 0.35em;
-    color: var(--ink-soft);
-    margin: 0 0 6px;
+    text-align:center; font-size:12px;
+    letter-spacing:.35em; color:var(--ink-soft); margin:0 0 6px;
   }
   h1{
-    text-align:center;
-    font-size: 24px;
-    font-weight:600;
-    letter-spacing: 0.18em;
-    margin: 0 0 28px;
-    color: var(--ink);
-    text-shadow: 1.5px 1.5px 0 rgba(184,51,42,0.35);
+    text-align:center; font-size:24px; font-weight:600;
+    letter-spacing:.18em; margin:0 0 28px;
+    color:var(--ink); text-shadow:1.5px 1.5px 0 rgba(184,51,42,.35);
   }
 
-  .stage-wrap{
-    position:relative;
-    margin-bottom: 26px;
-  }
+  .stage-wrap{ position:relative; margin-bottom:26px; }
+
+  /* リーチバナー */
   .reach-banner{
-    position:absolute;
-    left:50%;
-    top:-34px;
-    transform: translateX(-50%) scale(0.8);
-    font-family:'Yuji Syuku', serif;
-    font-size: 22px;
-    letter-spacing: 0.3em;
-    color: var(--hanko);
-    opacity:0;
-    pointer-events:none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    text-shadow: 0 0 6px rgba(184,51,42,0.25);
+    position:absolute; left:50%; top:-34px;
+    transform:translateX(-50%) scale(.8);
+    font-family:'Yuji Syuku',serif; font-size:22px;
+    letter-spacing:.3em; color:var(--hanko);
+    opacity:0; pointer-events:none;
+    transition:opacity .2s ease,transform .2s ease;
   }
   .reach-banner.show{
-    opacity:1;
-    transform: translateX(-50%) scale(1);
-    animation: reachPulse 0.5s ease-in-out infinite alternate;
+    opacity:1; transform:translateX(-50%) scale(1);
+    animation:reachPulse .5s ease-in-out infinite alternate;
   }
   @keyframes reachPulse{
-    from{ text-shadow: 0 0 4px rgba(184,51,42,0.2); }
-    to{ text-shadow: 0 0 16px rgba(184,51,42,0.7); }
+    from{text-shadow:0 0 4px rgba(184,51,42,.2)}
+    to{text-shadow:0 0 16px rgba(184,51,42,.7)}
   }
 
+  /* ステージ */
   .stage{
-    position:relative;
-    display:flex;
-    justify-content:center;
-    gap: 16px;
-    min-height: 160px;
-    align-items:center;
+    position:relative; display:flex;
+    justify-content:center; gap:16px;
+    min-height:160px; align-items:center;
   }
-  .stage.drumroll{
-    animation: stageShake 0.12s linear infinite;
-  }
+  .stage.drumroll{ animation:stageShake .12s linear infinite; }
   @keyframes stageShake{
-    0%{ transform: translate(0,0); }
-    25%{ transform: translate(1px,-1px); }
-    50%{ transform: translate(-1px,1px); }
-    75%{ transform: translate(1px,1px); }
-    100%{ transform: translate(-1px,-1px); }
-  }
-  .stage.light-effect .tile span{
-    animation: charFadeGlow 5s ease forwards;
-  }
-  @keyframes charFadeGlow{
-    0%{ opacity:1; text-shadow: 0 0 0 rgba(255,255,255,0); }
-    25%{ text-shadow: 0 0 18px rgba(255,255,255,0.95); }
-    100%{ opacity:0; text-shadow: 0 0 32px rgba(255,255,255,1); }
+    0%{transform:translate(0,0)} 25%{transform:translate(1px,-1px)}
+    50%{transform:translate(-1px,1px)} 75%{transform:translate(1px,1px)}
+    100%{transform:translate(-1px,-1px)}
   }
 
+  /* タイル */
   .tile{
-    width: 84px;
-    height: 110px;
-    border: 1px solid rgba(43,39,35,0.5);
-    background: linear-gradient(180deg, #fbf8f0, var(--paper-dark));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    box-shadow: 2px 3px 0 rgba(43,39,35,0.08);
-    overflow:hidden;
+    width:84px; height:110px;
+    border:1px solid rgba(43,39,35,.5);
+    background:linear-gradient(180deg,#fbf8f0,var(--paper-dark));
+    display:flex; align-items:center; justify-content:center;
+    position:relative; box-shadow:2px 3px 0 rgba(43,39,35,.08);
+    overflow:visible;
   }
-  .tile.locked{
-    border-color: var(--hanko);
-    box-shadow: 2px 3px 0 rgba(184,51,42,0.18);
-  }
+  .tile.locked{ border-color:var(--hanko); box-shadow:2px 3px 0 rgba(184,51,42,.18); }
   .tile.locked::after{
-    content:"固";
-    position:absolute;
-    top:3px; left:5px;
-    font-size:10px;
-    color: var(--hanko);
+    content:"固"; position:absolute; top:3px; left:5px;
+    font-size:10px; color:var(--hanko);
   }
   .tile span{
-    font-family: 'Yuji Syuku', serif;
-    font-size: 56px;
-    line-height:1;
-    color: var(--ink);
+    font-family:'Yuji Syuku',serif;
+    font-size:56px; line-height:1; color:var(--ink);
+    display:block;
   }
-  .tile.placeholder span{
-    opacity: 0.18;
-    font-size: 30px;
-  }
-  .tile.spinning span{
-    filter: blur(0.6px);
-    opacity: 0.85;
-  }
-  .tile.spinning.reach-final span{
-    color: var(--hanko);
-  }
+  .tile.placeholder span{ opacity:.18; font-size:30px; }
+  .tile.spinning span{ filter:blur(.6px); opacity:.85; }
+  .tile.spinning.reach-final span{ color:var(--hanko); }
   .tile.stopped span{
-    animation: reelStop 0.4s cubic-bezier(.2,.9,.3,1.2) forwards;
+    animation:reelStop .4s cubic-bezier(.2,.9,.3,1.2) forwards;
   }
   @keyframes reelStop{
-    0%{ opacity:0.6; transform: scale(1.25); filter: blur(2px); }
-    60%{ opacity:1; transform: scale(0.93); filter: blur(0); }
-    100%{ opacity:1; transform: scale(1); filter: blur(0); }
+    0%{opacity:.6;transform:scale(1.25);filter:blur(2px)}
+    60%{opacity:1;transform:scale(.93);filter:blur(0)}
+    100%{opacity:1;transform:scale(1);filter:blur(0)}
   }
 
+  /* 3文字目スペシャル: 一瞬大きく */
+  .tile.special-zoom span{
+    animation:specialZoom .55s cubic-bezier(.2,.9,.25,1.4) forwards;
+  }
+  @keyframes specialZoom{
+    0%{transform:scale(1);color:var(--ink)}
+    35%{transform:scale(2.4);color:var(--hanko);text-shadow:0 0 12px rgba(184,51,42,.5)}
+    100%{transform:scale(1);color:var(--ink);text-shadow:none}
+  }
+
+  /* ボタン */
   .controls{
-    display:flex;
-    justify-content:center;
-    position:relative;
-    z-index:60;
+    display:flex; justify-content:center;
+    position:relative; z-index:60;
   }
   button#drawBtn{
-    font-family: 'Shippori Mincho', serif;
-    font-size: 15px;
-    letter-spacing: 0.3em;
-    padding: 14px 36px;
-    background: var(--hanko);
-    color: #f3ecdd;
-    border: none;
-    cursor:pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-    box-shadow: 0 3px 0 var(--hanko-deep);
+    font-family:'Shippori Mincho',serif;
+    font-size:15px; letter-spacing:.3em;
+    padding:14px 36px;
+    background:var(--hanko); color:#f3ecdd;
+    border:none; cursor:pointer;
+    transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
+    box-shadow:0 3px 0 var(--hanko-deep);
   }
   button#drawBtn:hover:not(:disabled){ filter:brightness(1.05); }
-  button#drawBtn:active:not(:disabled){
-    transform: translateY(3px);
-    box-shadow: 0 0 0 var(--hanko-deep);
-  }
-  button#drawBtn:disabled{
-    filter: grayscale(0.3) brightness(0.95);
-    cursor: default;
-  }
-  button#drawBtn:focus-visible{
-    outline: 2px solid var(--gold);
-    outline-offset: 3px;
-  }
+  button#drawBtn:active:not(:disabled){ transform:translateY(3px);box-shadow:0 0 0 var(--hanko-deep); }
+  button#drawBtn:disabled{ filter:grayscale(.3) brightness(.95); cursor:default; }
+  button#drawBtn:focus-visible{ outline:2px solid var(--gold);outline-offset:3px; }
 
   .footnote{
-    text-align:center;
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--ink-soft);
-    letter-spacing: 0.15em;
-    min-height: 16px;
+    text-align:center; margin-top:18px;
+    font-size:12px; color:var(--ink-soft);
+    letter-spacing:.15em; min-height:16px;
   }
 
+  /* 詳細設定 */
   .settings-toggle{
-    display:block;
-    margin: 22px auto 0;
-    background:none;
-    border:none;
-    font-family:'Shippori Mincho', serif;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--ink-soft);
-    cursor:pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    display:block; margin:22px auto 0;
+    background:none; border:none;
+    font-family:'Shippori Mincho',serif;
+    font-size:11px; letter-spacing:.2em;
+    color:var(--ink-soft); cursor:pointer;
+    text-decoration:underline; text-underline-offset:3px;
   }
-  .settings-toggle:hover{ color: var(--ink); }
-
-  .settings-panel{
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dashed rgba(43,39,35,0.3);
-  }
+  .settings-toggle:hover{ color:var(--ink); }
+  .settings-panel{ margin-top:16px; padding-top:16px; border-top:1px dashed rgba(43,39,35,.3); }
   .settings-panel[hidden]{ display:none; }
-
   .toggle-row{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    font-size: 12px;
-    margin-bottom: 10px;
-    letter-spacing: 0.05em;
-    color: var(--ink-soft);
+    display:flex; align-items:center; gap:6px;
+    font-size:12px; margin-bottom:10px;
+    letter-spacing:.05em; color:var(--ink-soft);
   }
-
   .lock-row{
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    font-size: 12px;
-    margin-bottom: 8px;
-    letter-spacing: 0.05em;
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; margin-bottom:8px; letter-spacing:.05em;
   }
-  .lock-row label.pos-label{
-    width: 64px;
-    flex-shrink:0;
-    color: var(--ink-soft);
-  }
+  .lock-row label.pos-label{ width:64px; flex-shrink:0; color:var(--ink-soft); }
   select{
-    font-family:'Shippori Mincho', serif;
-    font-size: 13px;
-    padding: 3px 6px;
-    border: 1px solid rgba(43,39,35,0.4);
-    background: #fbf8f0;
-    color: var(--ink);
+    font-family:'Shippori Mincho',serif; font-size:13px;
+    padding:3px 6px; border:1px solid rgba(43,39,35,.4);
+    background:#fbf8f0; color:var(--ink);
   }
-  select:disabled{ opacity:0.4; }
-
+  select:disabled{ opacity:.4; }
   .section-block{
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px dashed rgba(43,39,35,0.3);
-    font-size: 12px;
+    margin-top:14px; padding-top:12px;
+    border-top:1px dashed rgba(43,39,35,.3); font-size:12px;
   }
   .section-block .title-line{
-    color: var(--ink-soft);
-    margin-bottom: 8px;
-    letter-spacing: 0.05em;
-    display:flex;
-    align-items:flex-start;
-    gap:6px;
+    color:var(--ink-soft); margin-bottom:8px;
+    letter-spacing:.05em; display:flex; align-items:flex-start; gap:6px;
   }
   .section-block .sub-note{
-    font-size: 11px;
-    color: var(--ink-soft);
-    opacity: 0.85;
-    margin: 4px 0 8px;
+    font-size:11px; color:var(--ink-soft); opacity:.85; margin:4px 0 8px;
   }
   .combo-row{
-    display:flex;
-    align-items:center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
+    display:flex; align-items:center; gap:6px;
+    flex-wrap:wrap; margin-bottom:6px;
   }
   .combo-row .combo-del{
-    background:none;
-    border: 1px solid rgba(184,51,42,0.5);
-    color: var(--hanko);
-    font-size: 11px;
-    line-height:1;
-    padding: 3px 7px;
-    cursor:pointer;
-    font-family:'Shippori Mincho', serif;
+    background:none; border:1px solid rgba(184,51,42,.5);
+    color:var(--hanko); font-size:11px; line-height:1;
+    padding:3px 7px; cursor:pointer; font-family:'Shippori Mincho',serif;
   }
-  .combo-row .combo-del:hover{
-    background: rgba(184,51,42,0.08);
-  }
+  .combo-row .combo-del:hover{ background:rgba(184,51,42,.08); }
   .add-btn{
-    margin-top: 4px;
-    background:none;
-    border: 1px dashed rgba(43,39,35,0.4);
-    color: var(--ink-soft);
-    font-size: 12px;
-    padding: 5px 10px;
-    cursor:pointer;
-    font-family:'Shippori Mincho', serif;
-    letter-spacing: 0.05em;
+    margin-top:4px; background:none;
+    border:1px dashed rgba(43,39,35,.4);
+    color:var(--ink-soft); font-size:12px;
+    padding:5px 10px; cursor:pointer;
+    font-family:'Shippori Mincho',serif; letter-spacing:.05em;
   }
-  .add-btn:hover{
-    color: var(--ink);
-    border-color: var(--ink);
-  }
-
+  .add-btn:hover{ color:var(--ink); border-color:var(--ink); }
   input[type="checkbox"]{
-    accent-color: var(--hanko);
-    width: 14px; height:14px;
-    flex-shrink:0;
-    margin-top:2px;
+    accent-color:var(--hanko); width:14px; height:14px;
+    flex-shrink:0; margin-top:2px;
   }
-  input[type="file"]{
-    font-size: 11px;
-    max-width: 100%;
-  }
+  input[type="file"]{ font-size:11px; max-width:100%; }
 
-  @media (prefers-reduced-motion: reduce){
-    .tile.stopped span{ animation:none; }
-    .reach-banner.show{ animation:none; }
-    .stage.drumroll{ animation:none; }
-    .bg-fx.active{ animation:none; opacity:0.5; }
-    .stage.light-effect .tile span{ animation:none; opacity:0.3; }
+  @media (prefers-reduced-motion:reduce){
+    .tile.stopped span,.stage.drumroll,.bg-fx.active,
+    .reach-banner.show,.tile.special-zoom span{ animation:none; }
+    .bg-fx.active{ opacity:.5; }
   }
 </style>
 </head>
 <body>
   <div class="bg-fx" id="bgFx"></div>
+  <div class="reach-ghost" id="reachGhost1"></div>
+  <div class="reach-ghost" id="reachGhost2"></div>
   <div class="white-out" id="whiteOut"></div>
 
   <div class="frame">
@@ -418,13 +317,13 @@
 
       <div class="section-block">
         <label class="title-line"><input type="checkbox" id="cheerFileEnable"> 演出効果音を外部ファイルにする</label>
-        <p class="sub-note">音声ファイル(mp3・wav・m4a・ogg等)を選ぶと、内蔵の合成音の代わりに再生されます。「うぉっ」連呼の音声などをご用意ください。</p>
+        <p class="sub-note">音声ファイル(mp3・wav・m4a・ogg等)を選ぶと内蔵合成音の代わりに再生されます。</p>
         <input type="file" id="cheerFileInput" accept=".mp3,.wav,.m4a,.aac,.ogg,.opus,.mp4,audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/aac">
       </div>
 
       <div class="section-block">
         <p class="title-line"><input type="checkbox" id="specialChk" checked> この1・2・3文字目が揃ったら光フェードアウト</p>
-        <p class="sub-note">1・2文字目がここに登録した組み合わせと一致した時点で、3文字目が回っている間に演出(掛け声+背景フラッシュ)が入ります。3文字すべて一致すると画面が白く包まれます。</p>
+        <p class="sub-note">1・2文字目が一致した時点で演出(掛け声+背景)が入ります。3文字すべて揃うと画面が白く包まれます。</p>
         <div id="specialList"></div>
         <button type="button" id="specialAddBtn" class="add-btn">＋ 組み合わせを追加</button>
       </div>
@@ -434,53 +333,44 @@
 
 <script>
   const HIRAGANA = [
-    "あ","い","う","え","お",
-    "か","き","く","け","こ",
-    "さ","し","す","せ","そ",
-    "た","ち","つ","て","と",
-    "な","に","ぬ","ね","の",
-    "は","ひ","ふ","へ","ほ",
-    "ま","み","む","め","も",
-    "や","ゆ","よ",
-    "ら","り","る","れ","ろ",
-    "わ","を","ん",
-    "が","ぎ","ぐ","げ","ご",
-    "ざ","じ","ず","ぜ","ぞ",
-    "だ","ぢ","づ","で","ど",
-    "ば","び","ぶ","べ","ぼ",
+    "あ","い","う","え","お","か","き","く","け","こ",
+    "さ","し","す","せ","そ","た","ち","つ","て","と",
+    "な","に","ぬ","ね","の","は","ひ","ふ","へ","ほ",
+    "ま","み","む","め","も","や","ゆ","よ",
+    "ら","り","る","れ","ろ","わ","を","ん",
+    "が","ぎ","ぐ","げ","ご","ざ","じ","ず","ぜ","ぞ",
+    "だ","ぢ","づ","で","ど","ば","び","ぶ","べ","ぼ",
     "ぱ","ぴ","ぷ","ぺ","ぽ"
   ];
   const MARU = "〇";
   const HIRAGANA_WITH_MARU = HIRAGANA.concat([MARU]);
 
-  const stage = document.getElementById('stage');
-  const drawBtn = document.getElementById('drawBtn');
-  const footnote = document.getElementById('footnote');
+  const stage       = document.getElementById('stage');
+  const drawBtn     = document.getElementById('drawBtn');
+  const footnote    = document.getElementById('footnote');
   const reachBanner = document.getElementById('reachBanner');
-  const bgFx = document.getElementById('bgFx');
-  const whiteOut = document.getElementById('whiteOut');
-  const tiles = [...stage.querySelectorAll('.tile')];
+  const bgFx        = document.getElementById('bgFx');
+  const ghost1      = document.getElementById('reachGhost1');
+  const ghost2      = document.getElementById('reachGhost2');
+  const whiteOut    = document.getElementById('whiteOut');
+  const tiles       = [...stage.querySelectorAll('.tile')];
+
   const settingsToggle = document.getElementById('settingsToggle');
-  const settingsPanel = document.getElementById('settingsPanel');
-
-  const muteChk = document.getElementById('muteChk');
-  const maruChk = document.getElementById('maruChk');
-
-  const lockChks = [0,1,2].map(i => document.getElementById('lockChk' + i));
-  const lockSels = [0,1,2].map(i => document.getElementById('lockSel' + i));
-
-  const cheerFileEnable = document.getElementById('cheerFileEnable');
+  const settingsPanel  = document.getElementById('settingsPanel');
+  const muteChk        = document.getElementById('muteChk');
+  const maruChk        = document.getElementById('maruChk');
+  const lockChks       = [0,1,2].map(i => document.getElementById('lockChk' + i));
+  const lockSels       = [0,1,2].map(i => document.getElementById('lockSel' + i));
+  const cheerFileEnable= document.getElementById('cheerFileEnable');
   const cheerFileInput = document.getElementById('cheerFileInput');
-
-  const specialChk = document.getElementById('specialChk');
-  const specialList = document.getElementById('specialList');
-  const specialAddBtn = document.getElementById('specialAddBtn');
+  const specialChk     = document.getElementById('specialChk');
+  const specialList    = document.getElementById('specialList');
+  const specialAddBtn  = document.getElementById('specialAddBtn');
 
   function fillSelect(sel){
     HIRAGANA_WITH_MARU.forEach(c => {
       const opt = document.createElement('option');
-      opt.value = c;
-      opt.textContent = c;
+      opt.value = opt.textContent = c;
       sel.appendChild(opt);
     });
   }
@@ -494,30 +384,23 @@
   });
 
   settingsToggle.addEventListener('click', () => {
-    const isHidden = settingsPanel.hasAttribute('hidden');
-    if(isHidden){
-      settingsPanel.removeAttribute('hidden');
-      settingsToggle.textContent = '詳細設定 ▴';
-    } else {
-      settingsPanel.setAttribute('hidden', '');
-      settingsToggle.textContent = '詳細設定 ▾';
-    }
+    const h = settingsPanel.hasAttribute('hidden');
+    h ? settingsPanel.removeAttribute('hidden') : settingsPanel.setAttribute('hidden','');
+    settingsToggle.textContent = h ? '詳細設定 ▴' : '詳細設定 ▾';
   });
 
   function addSpecialRow(c1, c2, c3){
     const row = document.createElement('div');
     row.className = 'combo-row';
-    const mk = (text) => { const s = document.createElement('span'); s.textContent = text; return s; };
-    const sel1 = document.createElement('select'); fillSelect(sel1); if(c1) sel1.value = c1;
-    const sel2 = document.createElement('select'); fillSelect(sel2); if(c2) sel2.value = c2;
-    const sel3 = document.createElement('select'); fillSelect(sel3); if(c3) sel3.value = c3;
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'combo-del';
-    delBtn.textContent = '削除';
-    delBtn.addEventListener('click', () => row.remove());
-    row.append(mk('1文字目='), sel1, mk('2文字目='), sel2, mk('3文字目='), sel3, delBtn);
-    row._sel1 = sel1; row._sel2 = sel2; row._sel3 = sel3;
+    const mk = t => { const s=document.createElement('span'); s.textContent=t; return s; };
+    const sel1=document.createElement('select'); fillSelect(sel1); if(c1) sel1.value=c1;
+    const sel2=document.createElement('select'); fillSelect(sel2); if(c2) sel2.value=c2;
+    const sel3=document.createElement('select'); fillSelect(sel3); if(c3) sel3.value=c3;
+    const del=document.createElement('button');
+    del.type='button'; del.className='combo-del'; del.textContent='削除';
+    del.addEventListener('click', () => row.remove());
+    row.append(mk('1文字目='),sel1,mk('2文字目='),sel2,mk('3文字目='),sel3,del);
+    row._sel1=sel1; row._sel2=sel2; row._sel3=sel3;
     specialList.appendChild(row);
   }
   specialAddBtn.addEventListener('click', () => addSpecialRow());
@@ -525,24 +408,20 @@
 
   function randomChar(){
     const pool = maruChk.checked ? HIRAGANA_WITH_MARU : HIRAGANA;
-    return pool[Math.floor(Math.random() * pool.length)];
+    return pool[Math.floor(Math.random()*pool.length)];
   }
 
   function startSpinVisual(tile){
-    tile.classList.remove('placeholder', 'stopped');
+    tile.classList.remove('placeholder','stopped','special-zoom');
     tile.classList.add('spinning');
     const span = tile.querySelector('span');
-    const intervalId = setInterval(() => {
-      span.textContent = randomChar();
-    }, 45);
-    return intervalId;
+    return setInterval(() => { span.textContent = randomChar(); }, 45);
   }
 
   function stopSpinVisual(tile, intervalId, finalChar){
     clearInterval(intervalId);
-    const span = tile.querySelector('span');
-    span.textContent = finalChar;
-    tile.classList.remove('spinning', 'reach-final');
+    tile.querySelector('span').textContent = finalChar;
+    tile.classList.remove('spinning','reach-final');
     tile.classList.add('stopped');
     void tile.offsetWidth;
     tile.classList.remove('stopped');
@@ -550,146 +429,219 @@
   }
 
   function showWhiteOut(){
-    whiteOut.style.transition = 'opacity 5s linear';
+    whiteOut.style.transition='opacity 5s linear';
     void whiteOut.offsetWidth;
-    whiteOut.style.opacity = '1';
+    whiteOut.style.opacity='1';
   }
   function hideWhiteOut(){
-    whiteOut.style.transition = 'opacity 0.3s ease';
-    whiteOut.style.opacity = '0';
+    whiteOut.style.transition='opacity 0.3s ease';
+    whiteOut.style.opacity='0';
   }
 
-  /* ---------- audio ---------- */
+  /* ========== AUDIO ========== */
   let audioCtx = null;
   function ensureAudio(){
-    if(!audioCtx){
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if(audioCtx.state === 'suspended'){ audioCtx.resume(); }
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
     return audioCtx;
   }
 
-  function makeNoiseBuffer(ctx, duration){
-    const len = Math.max(1, Math.floor(ctx.sampleRate * duration));
-    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for(let i=0;i<len;i++){ data[i] = Math.random()*2-1; }
-    return buffer;
+  function makeNoiseBuffer(ctx, dur){
+    const len = Math.max(1, Math.floor(ctx.sampleRate*dur));
+    const buf = ctx.createBuffer(1,len,ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+    return buf;
   }
 
-  function playDrumHit(ctx, time, peak){
+  /* ── ドラムロール: 停止可能な設計 ── */
+  let drumMasterGain = null;
+  let drumNodes = [];
+
+  function playDrumHit(ctx, time, peak, destNode){
     const src = ctx.createBufferSource();
     src.buffer = makeNoiseBuffer(ctx, 0.06);
     const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 260;
-    bp.Q.value = 0.9;
+    bp.type='bandpass'; bp.frequency.value=260; bp.Q.value=0.9;
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(peak, time + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
-    src.connect(bp).connect(gain).connect(ctx.destination);
-    src.start(time);
-    src.stop(time + 0.09);
+    gain.gain.setValueAtTime(0,time);
+    gain.gain.linearRampToValueAtTime(peak, time+0.005);
+    gain.gain.exponentialRampToValueAtTime(0.001, time+0.08);
+    src.connect(bp).connect(gain).connect(destNode);
+    src.start(time); src.stop(time+0.09);
+    drumNodes.push(src);
   }
 
   function startDrumroll(durationMs){
-    if(muteChk.checked || durationMs <= 0) return;
+    if(muteChk.checked || durationMs<=0) return;
     const ctx = ensureAudio();
+    stopDrumrollNow(); // 前のを切る
+    drumNodes = [];
+    drumMasterGain = ctx.createGain();
+    drumMasterGain.gain.setValueAtTime(1, ctx.currentTime);
+    drumMasterGain.connect(ctx.destination);
     const now = ctx.currentTime;
-    const total = durationMs / 1000;
-    const hitGap = 0.07;
-    const hits = Math.max(1, Math.floor(total / hitGap));
+    const total = durationMs/1000;
+    const gap = 0.07;
+    const hits = Math.max(1, Math.floor(total/gap));
     for(let i=0;i<hits;i++){
-      const t = now + i*hitGap;
-      const peak = 0.1 + (i/hits)*0.2;
-      playDrumHit(ctx, t, peak);
+      playDrumHit(ctx, now+i*gap, 0.1+(i/hits)*0.2, drumMasterGain);
     }
   }
 
+  function stopDrumrollNow(){
+    if(!drumMasterGain) return;
+    const ctx = ensureAudio();
+    const now = ctx.currentTime;
+    try{
+      drumMasterGain.gain.cancelScheduledValues(now);
+      drumMasterGain.gain.setValueAtTime(drumMasterGain.gain.value, now);
+      drumMasterGain.gain.linearRampToValueAtTime(0, now+0.015); // 15ms でスパッと切る
+    }catch(e){}
+    drumMasterGain = null;
+    drumNodes = [];
+  }
+
+  /* ── カッ: 太鼓のフチ打ち ── */
+  function playRimShot(){
+    if(muteChk.checked) return;
+    const ctx = ensureAudio();
+    const now = ctx.currentTime;
+
+    // ハイ成分 (カチッ)
+    const noise = ctx.createBufferSource();
+    noise.buffer = makeNoiseBuffer(ctx, 0.04);
+    const hp = ctx.createBiquadFilter();
+    hp.type='highpass'; hp.frequency.value=4000;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.9,now);
+    ng.gain.exponentialRampToValueAtTime(0.001, now+0.035);
+    noise.connect(hp).connect(ng).connect(ctx.destination);
+    noise.start(now); noise.stop(now+0.04);
+
+    // ロー成分 (コン)
+    const osc = ctx.createOscillator();
+    osc.type='sine'; osc.frequency.setValueAtTime(500,now);
+    osc.frequency.exponentialRampToValueAtTime(180, now+0.025);
+    const og = ctx.createGain();
+    og.gain.setValueAtTime(0.6,now);
+    og.gain.exponentialRampToValueAtTime(0.001, now+0.03);
+    osc.connect(og).connect(ctx.destination);
+    osc.start(now); osc.stop(now+0.035);
+  }
+
+  /* ── うぉっ演出音 ── */
   function playCheerHit(ctx, time, peak){
     const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(190, time);
-    osc.frequency.exponentialRampToValueAtTime(95, time + 0.13);
+    osc.type='sawtooth';
+    osc.frequency.setValueAtTime(190,time);
+    osc.frequency.exponentialRampToValueAtTime(95,time+0.13);
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(peak, time + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+    gain.gain.setValueAtTime(0,time);
+    gain.gain.linearRampToValueAtTime(peak,time+0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001,time+0.2);
     osc.connect(gain).connect(ctx.destination);
-    osc.start(time);
-    osc.stop(time + 0.22);
+    osc.start(time); osc.stop(time+0.22);
 
     const noise = ctx.createBufferSource();
-    noise.buffer = makeNoiseBuffer(ctx, 0.15);
+    noise.buffer = makeNoiseBuffer(ctx,0.15);
     const hp = ctx.createBiquadFilter();
-    hp.type = 'highpass';
-    hp.frequency.value = 700;
-    const ngain = ctx.createGain();
-    ngain.gain.setValueAtTime(0, time);
-    ngain.gain.linearRampToValueAtTime(peak*0.4, time + 0.01);
-    ngain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
-    noise.connect(hp).connect(ngain).connect(ctx.destination);
-    noise.start(time);
-    noise.stop(time + 0.16);
+    hp.type='highpass'; hp.frequency.value=700;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0,time);
+    ng.gain.linearRampToValueAtTime(peak*0.4,time+0.01);
+    ng.gain.exponentialRampToValueAtTime(0.001,time+0.15);
+    noise.connect(hp).connect(ng).connect(ctx.destination);
+    noise.start(time); noise.stop(time+0.16);
   }
 
   function playSynthCheer(){
     const ctx = ensureAudio();
     const now = ctx.currentTime;
-    const gap = 0.22;
-    for(let i=0;i<4;i++){
-      playCheerHit(ctx, now + i*gap, 0.22 + i*0.045);
-    }
+    for(let i=0;i<4;i++) playCheerHit(ctx, now+i*0.22, 0.22+i*0.045);
   }
 
-  let cheerAudioEl = null;
+  // 埋め込み効果音（base64 → AudioContext で再生）
+  const BUILTIN_CHEER_B64 = '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';
+  let builtinCheerBuffer = null;  // デコード済みAudioBuffer
+  let externalCheerBuffer = null; // 外部ファイルのAudioBuffer
   let cheerAudioUrl = null;
-  cheerFileInput.addEventListener('change', (e) => {
+  // base64 → ArrayBuffer
+  function b64ToArrayBuffer(b64){
+    const bin = atob(b64);
+    const buf = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+    return buf.buffer;
+  }
+
+  // AudioContextでデコードしてバッファに保存
+  async function decodeBuiltinCheer(){
+    if(builtinCheerBuffer) return;
+    try{
+      const ctx = ensureAudio();
+      builtinCheerBuffer = await ctx.decodeAudioData(b64ToArrayBuffer(BUILTIN_CHEER_B64));
+    }catch(e){ console.warn('builtin cheer decode failed',e); }
+  }
+
+  // 外部ファイルを AudioContext でデコード（fetchでBlobURL読み込み）
+  async function decodeExternalCheer(url){
+    try{
+      const ctx = ensureAudio();
+      const resp = await fetch(url);
+      const ab = await resp.arrayBuffer();
+      externalCheerBuffer = await ctx.decodeAudioData(ab);
+    }catch(e){ console.warn('external cheer decode failed',e); }
+  }
+
+  function playAudioBuffer(buf){
+    if(!buf) return false;
+    try{
+      const ctx = ensureAudio();
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start();
+      return true;
+    }catch(e){ return false; }
+  }
+
+  cheerFileInput.addEventListener('change', e => {
     const file = e.target.files && e.target.files[0];
     if(!file) return;
     if(cheerAudioUrl) URL.revokeObjectURL(cheerAudioUrl);
     cheerAudioUrl = URL.createObjectURL(file);
-    cheerAudioEl = new Audio(cheerAudioUrl);
+    externalCheerBuffer = null;
+    decodeExternalCheer(cheerAudioUrl);
   });
 
   function playCheer(){
     if(muteChk.checked) return;
-    if(cheerFileEnable.checked && cheerAudioEl){
-      try{
-        cheerAudioEl.currentTime = 0;
-        cheerAudioEl.play();
-      }catch(e){ /* ignore playback errors */ }
+    if(cheerFileEnable.checked && externalCheerBuffer){
+      playAudioBuffer(externalCheerBuffer);
       return;
     }
-    playSynthCheer();
+    if(!playAudioBuffer(builtinCheerBuffer)){
+      playSynthCheer(); // フォールバック
+    }
   }
-  /* -------------------------------------------------------------- */
+  /* ========== /AUDIO ========== */
 
-  /* ---------- 設定の保存・復元 ---------- */
+  /* ========== 設定保存 ========== */
   const STORAGE_KEY = 'sanmoji_settings_v1';
 
   function collectSettings(){
-    const specials = [...specialList.children].map(row => ({
-      c1: row._sel1.value, c2: row._sel2.value, c3: row._sel3.value
-    }));
     return {
       mute: muteChk.checked,
       maru: maruChk.checked,
       cheerFileEnable: cheerFileEnable.checked,
       specialEnabled: specialChk.checked,
-      locks: [0,1,2].map(i => ({
-        enabled: lockChks[i].checked,
-        value: lockSels[i].value
-      })),
-      specials
+      locks: [0,1,2].map(i => ({ enabled:lockChks[i].checked, value:lockSels[i].value })),
+      specials: [...specialList.children].map(r => ({ c1:r._sel1.value, c2:r._sel2.value, c3:r._sel3.value }))
     };
   }
 
   function saveSettings(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectSettings()));
-    }catch(e){}
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(collectSettings())); }catch(e){}
   }
 
   function loadSettings(){
@@ -697,36 +649,28 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if(!raw) return;
       const s = JSON.parse(raw);
-
       muteChk.checked = !!s.mute;
       maruChk.checked = !!s.maru;
       cheerFileEnable.checked = !!s.cheerFileEnable;
       specialChk.checked = s.specialEnabled !== false;
-
-      (s.locks || []).forEach((l, i) => {
+      (s.locks||[]).forEach((l,i) => {
         lockChks[i].checked = !!l.enabled;
         lockSels[i].disabled = !l.enabled;
         lockSels[i].value = l.value || HIRAGANA[0];
         tiles[i].classList.toggle('locked', !!l.enabled);
       });
-
-      // specialList: 既存の1行を消してから復元
       while(specialList.firstChild) specialList.removeChild(specialList.firstChild);
       const rows = s.specials && s.specials.length ? s.specials : [{}];
       rows.forEach(r => addSpecialRow(r.c1, r.c2, r.c3));
     }catch(e){}
   }
 
-  // 変更のたびに自動保存
-  document.querySelectorAll('input[type="checkbox"], select').forEach(el => {
-    el.addEventListener('change', saveSettings);
-  });
-  // 組み合わせ行の追加・削除後にも保存(MutationObserver)
-  new MutationObserver(saveSettings).observe(specialList, { childList: true });
-
+  document.querySelectorAll('input[type="checkbox"],select').forEach(el => el.addEventListener('change',saveSettings));
+  new MutationObserver(saveSettings).observe(specialList, {childList:true});
   loadSettings();
-  /* -------------------------------------- */
+  /* ========== /設定保存 ========== */
 
+  /* ========== MAIN SLOT LOGIC ========== */
   let isSpinning = false;
 
   drawBtn.addEventListener('click', () => {
@@ -735,10 +679,13 @@
     drawBtn.disabled = true;
     footnote.textContent = '';
     reachBanner.classList.remove('show');
-    stage.classList.remove('drumroll', 'light-effect');
+    stage.classList.remove('drumroll','light-effect');
     bgFx.classList.remove('active');
+    ghost1.classList.remove('show');
+    ghost2.classList.remove('show');
     hideWhiteOut();
 
+    decodeBuiltinCheer(); // AudioContextが開いた直後にデコード開始
     const finals = [0,1,2].map(i => lockChks[i].checked ? lockSels[i].value : null);
     const baseDurations = [650, 1050, 1450];
     const intervals = [
@@ -749,20 +696,22 @@
 
     startDrumroll(baseDurations[1]);
 
+    // 1文字目停止
     setTimeout(() => {
       const f0 = finals[0] !== null ? finals[0] : randomChar();
       finals[0] = f0;
       stopSpinVisual(tiles[0], intervals[0], f0);
     }, baseDurations[0]);
 
+    // 2文字目停止
     setTimeout(() => {
       const f1 = finals[1] !== null ? finals[1] : randomChar();
       finals[1] = f1;
       stopSpinVisual(tiles[1], intervals[1], f1);
 
-      const willReach = specialChk.checked && [...specialList.children].some(row => {
-        return finals[0] === row._sel1.value && f1 === row._sel2.value;
-      });
+      const willReach = specialChk.checked && [...specialList.children].some(row =>
+        finals[0] === row._sel1.value && f1 === row._sel2.value
+      );
 
       let duration2 = baseDurations[2];
       if(willReach){
@@ -771,26 +720,43 @@
         stage.classList.add('drumroll');
         bgFx.classList.add('active');
         tiles[2].classList.add('reach-final');
+        // 幽霊文字を表示
+        ghost1.textContent = finals[0];
+        ghost2.textContent = f1;
+        ghost1.classList.add('show');
+        ghost2.classList.add('show');
         playCheer();
       }
 
       startDrumroll(duration2);
 
+      // 3文字目停止
       setTimeout(() => {
         const f2 = finals[2] !== null ? finals[2] : randomChar();
         finals[2] = f2;
+
+        stopDrumrollNow();     // ドラムロールをスパッと止める
+        playRimShot();         // カッ！
+
         stopSpinVisual(tiles[2], intervals[2], f2);
         reachBanner.classList.remove('show');
         stage.classList.remove('drumroll');
         bgFx.classList.remove('active');
+        ghost1.classList.remove('show');
+        ghost2.classList.remove('show');
         footnote.textContent = finals.join('・');
 
-        const matchedSpecial = specialChk.checked && [...specialList.children].some(row => {
-          return finals[0] === row._sel1.value && finals[1] === row._sel2.value && finals[2] === row._sel3.value;
-        });
+        const matchedSpecial = specialChk.checked && [...specialList.children].some(row =>
+          finals[0] === row._sel1.value && finals[1] === row._sel2.value && finals[2] === row._sel3.value
+        );
+
         if(matchedSpecial){
-          stage.classList.add('light-effect');
-          showWhiteOut();
+          // 3文字目を一瞬大きく
+          tiles[2].classList.add('special-zoom');
+          setTimeout(() => {
+            stage.classList.add('light-effect');
+            showWhiteOut();
+          }, 600);
         }
 
         isSpinning = false;
